@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
+    public int currentScore = 0;
+
     [Tooltip("Length of game."), SerializeField]
     private int startingMinutes = 5;
 

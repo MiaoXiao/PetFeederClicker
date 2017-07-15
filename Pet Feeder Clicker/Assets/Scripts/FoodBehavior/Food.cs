@@ -38,7 +38,7 @@ public class Food : MonoBehaviour, IIsStorable
 
     public void SetStorage(Grid new_grid)
     {
-        print("moving " + transform.name + " to " + new_grid.name);
+        //print("moving " + transform.name + " to " + new_grid.name);
         transform.SetParent(new_grid.transform, true);
     }
 
