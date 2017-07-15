@@ -7,6 +7,8 @@ public class UIManager : Singleton<UIManager>
 {
     public TipController tipController;
 
+    public Transform viewableTransform;
+
     [SerializeField]
     private Text clockTimer;
 

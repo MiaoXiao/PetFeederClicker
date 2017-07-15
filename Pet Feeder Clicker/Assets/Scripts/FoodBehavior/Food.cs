@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Food : MonoBehaviour
+public class Food : MonoBehaviour, IIsStorable
 {
     [SerializeField]
     private List<IngredientPreperation> ingredientCombination = new List<IngredientPreperation>();
@@ -14,6 +14,48 @@ public class Food : MonoBehaviour
     public int GetNumberOfCurrentIngredients
     {
         get { return ingredientCombination.Count; }
+    }
+
+    public bool CanAcceptFood()
+    {
+        return false;
+    }
+
+    public Grid GetCurrentStorage()
+    {
+        return GetComponentInParent<Grid>();
+    }
+
+    public Transform GetTransform()
+    {
+        return transform;
+    }
+
+    public void SetPosition(Vector3 pos)
+    {
+        transform.position = pos;
+    }
+
+    public void SetStorage(Grid new_grid)
+    {
+        print("moving " + transform.name + " to " + new_grid.name);
+        transform.SetParent(new_grid.transform, true);
+    }
+
+    //Drag events
+    public void BeginDrag()
+    {
+        DragManager.Instance.BeginDrag(GetComponent<IIsStorable>());
+    }
+
+    public void UpdateDrag()
+    {
+        DragManager.Instance.UpdateDrag(GetComponent<IIsStorable>());
+    }
+
+    public void EndDrag()
+    {
+        DragManager.Instance.EndDrag(GetComponent<IIsStorable>());
     }
 }
 
