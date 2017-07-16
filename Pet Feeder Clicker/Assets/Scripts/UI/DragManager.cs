@@ -47,6 +47,9 @@ public class DragManager : Singleton<DragManager>
             {
                 Grid current_grid = current_container.allGrids[j];
 
+                if (!current_container.allowedTypes.Contains(storable.GetTypeName()))
+                    break;
+
                 if (current_grid.boundsIsFullImage && current_grid.isHoveredOver && current_grid.unlimitedStorage)
                 {
                     best_grid = current_grid;

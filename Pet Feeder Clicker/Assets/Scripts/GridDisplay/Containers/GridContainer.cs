@@ -7,6 +7,8 @@ public class GridContainer : MonoBehaviour
     [HideInInspector]
     public List<Grid> allGrids = new List<Grid>();
 
+    public List<string> allowedTypes = new List<string>();
+
     private void Awake()
     {
         for (int i = 0; i < transform.childCount; ++i)

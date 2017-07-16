@@ -2,19 +2,60 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class Food : MonoBehaviour, IIsStorable
+public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 {
+    public IngredientData originalIngredient;
+
     [SerializeField]
-    private List<IngredientPreperation> ingredientCombination = new List<IngredientPreperation>();
+    private List<IngredientData> otherIngredients = new List<IngredientData>();
+
+    public bool fullyCut { get { return _numberOfCuts == GameManager.Instance.totalCutsPerIngredient; } }
+
+    private int _numberOfCuts = 0;
+    public int numberOfCuts
+    {
+        get { return _numberOfCuts; }
+        set
+        {
+            if (value > GameManager.Instance.totalCutsPerIngredient)
+                return;
+
+            if (value == GameManager.Instance.totalCutsPerIngredient)
+            {
+                _numberOfCuts = GameManager.Instance.totalCutsPerIngredient;
+                currentImage.sprite = originalIngredient.cutIngredientSprite;
+            }
+            else
+            {
+                _numberOfCuts = value;
+            }
+
+            //TODO: show cutting particles
+        }
+    }
+
+    private Image currentImage;
 
     /// <summary>
-    /// Number of ingredients in this food.
+    /// Number of OTHER ingredients in this food.
     /// </summary>
-    public int GetNumberOfCurrentIngredients
+    public int GetNumberOfExtraIngredients
     {
-        get { return ingredientCombination.Count; }
+        get { return otherIngredients.Count; }
     }
+
+    private void Awake()
+    {
+        currentImage = GetComponent<Image>();
+        currentImage.sprite = originalIngredient.ingredientSprite;
+    }
+
+    //////////////////////////////////////////
+    //Interfaces
+    //////////////////////////////////////////
 
     public bool CanAcceptFood()
     {
@@ -42,7 +83,15 @@ public class Food : MonoBehaviour, IIsStorable
         transform.SetParent(new_grid.transform, true);
     }
 
-    //Drag events
+    public string GetTypeName()
+    {
+        return GetType().Name;
+    }
+
+    //////////////////////////////////////////
+    //Drag Events
+    //////////////////////////////////////////
+
     public void BeginDrag()
     {
         DragManager.Instance.BeginDrag(GetComponent<IIsStorable>());
@@ -57,24 +106,17 @@ public class Food : MonoBehaviour, IIsStorable
     {
         DragManager.Instance.EndDrag(GetComponent<IIsStorable>());
     }
-}
 
-[Serializable]
-public class IngredientPreperation
-{
-    public IngredientData ingredientData;
+    //////////////////////////////////////////
+    //Click Events
+    //////////////////////////////////////////
 
-    private int _timesCut = 0;
-    public int timesCut
+    public void OnPointerDown(PointerEventData eventData)
     {
-        get { return _timesCut; }
-        set
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (timesCut < 0 || timesCut >= ingredientData.cutTimeInClicks)
-                return;
-
-            //TODO: change image to match number of times to cut
+            if (GetComponent<IIsStorable>().GetCurrentStorage().gridContainerParent is CuttingBoard)
+            numberOfCuts++;
         }
     }
-
 }

@@ -10,6 +10,8 @@ public class GameManager : Singleton<GameManager>
     [Tooltip("Length of game."), SerializeField]
     private int startingMinutes = 5;
 
+    public int totalCutsPerIngredient = 5;
+
     private int currentMinutes;
     private int currentSeconds = 0;
     private float secondCounter = 0f;
