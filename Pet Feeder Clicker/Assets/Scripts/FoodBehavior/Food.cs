@@ -7,36 +7,23 @@ using UnityEngine.UI;
 
 public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 {
-    public IngredientData originalIngredient;
+    public IngredientPrepration originalIngredient;
 
-    [SerializeField]
-    private List<IngredientData> otherIngredients = new List<IngredientData>();
+    public List<IngredientPrepration> otherIngredients = new List<IngredientPrepration>();
 
-    public bool fullyCut { get { return _numberOfCuts == GameManager.Instance.totalCutsPerIngredient; } }
-
-    private int _numberOfCuts = 0;
-    public int numberOfCuts
+    public void AddFood(List<IngredientPrepration> other)
     {
-        get { return _numberOfCuts; }
-        set
+        for (int i = 0; i < other.Count; ++i)
         {
-            if (value > GameManager.Instance.totalCutsPerIngredient)
-                return;
-
-            if (value == GameManager.Instance.totalCutsPerIngredient)
-            {
-                _numberOfCuts = GameManager.Instance.totalCutsPerIngredient;
-                currentImage.sprite = originalIngredient.cutIngredientSprite;
-            }
-            else
-            {
-                _numberOfCuts = value;
-            }
-
-            //TODO: show cutting particles
+            otherIngredients.Add(other[i].Clone());
+            GameObject ingredient = GameManager.Instance.extraFoodPooler.GetObject();
+            ingredient.transform.SetParent(transform, true);
+            ingredient.GetComponent<Image>().sprite = other[i].currentSprite;
         }
     }
 
+
+    
     private Image currentImage;
 
     /// <summary>
@@ -50,7 +37,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
     private void Awake()
     {
         currentImage = GetComponent<Image>();
-        currentImage.sprite = originalIngredient.ingredientSprite;
+        currentImage.sprite = originalIngredient.Ingredient.ingredientSprite;
     }
 
     //////////////////////////////////////////
@@ -59,7 +46,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 
     public bool CanAcceptFood()
     {
-        return false;
+        return originalIngredient.fullyCut;
     }
 
     public Grid GetCurrentStorage()
@@ -81,6 +68,20 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
     {
         //print("moving " + transform.name + " to " + new_grid.name);
         transform.SetParent(new_grid.transform, true);
+
+        if (new_grid.transform.childCount >= 2)
+        {
+            print("combine");
+
+            //Combine ingredients into one ingredient
+            otherIngredients.Add(originalIngredient);
+            new_grid.storedObject.GetTransform().GetComponent<Food>().AddFood(otherIngredients);
+
+            //Remove this object
+            transform.SetParent(null, true);
+            gameObject.SetActive(false);
+        }
+        
     }
 
     public string GetTypeName()
@@ -115,8 +116,56 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (GetComponent<IIsStorable>().GetCurrentStorage().gridContainerParent is CuttingBoard)
-            numberOfCuts++;
+            print("click");
+            if (GetCurrentStorage().gridContainerParent is CuttingBoard)
+            {
+                originalIngredient.numberOfCuts++;
+                currentImage.sprite = originalIngredient.currentSprite;
+            }
+
         }
+    }
+}
+
+[Serializable]
+public class IngredientPrepration
+{
+    public IngredientData Ingredient;
+
+    public bool fullyCut { get { return _numberOfCuts == GameManager.Instance.totalCutsPerIngredient; } }
+
+    private int _numberOfCuts = 0;
+    public int numberOfCuts
+    {
+        get { return _numberOfCuts; }
+        set
+        {
+            if (value > GameManager.Instance.totalCutsPerIngredient)
+                return;
+
+            if (value == GameManager.Instance.totalCutsPerIngredient)
+            {
+                _numberOfCuts = GameManager.Instance.totalCutsPerIngredient;
+                currentSprite = Ingredient.cutIngredientSprite;
+            }
+            else
+            {
+                _numberOfCuts = value;
+                currentSprite = Ingredient.ingredientSprite;
+            }
+
+            //TODO: show cutting particles
+        }
+    }
+
+    public Sprite currentSprite;
+
+    public IngredientPrepration Clone()
+    {
+        IngredientPrepration new_prep = new IngredientPrepration();
+        new_prep._numberOfCuts = _numberOfCuts;
+        new_prep.currentSprite = currentSprite;
+        new_prep.Ingredient = Ingredient;
+        return new_prep;
     }
 }

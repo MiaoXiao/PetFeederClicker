@@ -12,6 +12,8 @@ public class GameManager : Singleton<GameManager>
 
     public int totalCutsPerIngredient = 5;
 
+    public ObjectPooler extraFoodPooler;
+
     private int currentMinutes;
     private int currentSeconds = 0;
     private float secondCounter = 0f;
