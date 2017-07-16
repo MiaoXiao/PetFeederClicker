@@ -27,7 +27,7 @@ public class IngredientSpawner : MonoBehaviour
     [SerializeField]
     private List<Spawner> allSpawners = new List<Spawner>();
 
-    private void Awake()
+    private void Start()
     {
         StartWave();
     }
@@ -48,27 +48,17 @@ public class IngredientSpawner : MonoBehaviour
             GameObject food = allSpawners[rand_index].objectPooler.GetObject();
             food.transform.SetParent(spawningArea.transform, true);
 
-            Rect rect = RectTransformUtility.PixelAdjustRect(spawningArea, UIManager.Instance.GetComponent<Canvas>());
-            //print(worldpos);
-            //Rect rect = RectTransformToScreenSpace(spawningArea);
-            //print(rect.min);
-            //print(rect.max);
-            //float rand_x = UnityEngine.Random.Range(rect.min.x, rect.max.x);
-            //float rand_y = UnityEngine.Random.Range(rect.min.y, rect.max.y);
-
-            //food.transform.position = new Vector2(rand_x, rand_y);
-         
+            float min_x = spawningArea.transform.position.x - ((spawningArea.rect.width * UIManager.Instance.mainCanvas.scaleFactor) / 2f);
+            float max_x = spawningArea.transform.position.x + ((spawningArea.rect.width * UIManager.Instance.mainCanvas.scaleFactor) / 2f);
+            float min_y = spawningArea.transform.position.y - ((spawningArea.rect.height * UIManager.Instance.mainCanvas.scaleFactor) / 2f);
+            float max_y = spawningArea.transform.position.y + ((spawningArea.rect.height * UIManager.Instance.mainCanvas.scaleFactor) / 2f);
+            float rand_x = UnityEngine.Random.Range(min_x, max_x);
+            float rand_y = UnityEngine.Random.Range(min_y, max_y);
+            food.transform.position = new Vector2(rand_x, rand_y);
+            //print(rand_x);
+            //print(rand_y);
 
         }
-    }
-
-    public static Rect RectTransformToScreenSpace(RectTransform transform)
-    {
-        Vector2 size = Vector2.Scale(transform.rect.size, transform.lossyScale);
-        float x = transform.position.x + transform.anchoredPosition.x;
-        float y = Screen.height - transform.position.y - transform.anchoredPosition.y;
-
-        return new Rect(x, y, size.x, size.y);
     }
 }
 
