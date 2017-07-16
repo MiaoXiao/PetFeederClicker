@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DraggableCookingWare : MonoBehaviour
 {
@@ -18,6 +19,12 @@ public class DraggableCookingWare : MonoBehaviour
         lastParent = transform.parent.transform;
         transform.SetParent(UIManager.Instance.viewableTransform, true);
         transform.position = Input.mousePosition;
+
+        Image[] images = GetComponentsInChildren<Image>();
+        for (int i = 0; i < images.Length; ++i)
+        {
+            images[i].raycastTarget = false;
+        }
     }
 
     public void UpdateDrag()
@@ -35,5 +42,11 @@ public class DraggableCookingWare : MonoBehaviour
         transform.SetParent(lastParent, true);
         cookingWare.Paused = false;
         //DragManager.Instance.EndDrag(GetComponent<IIsStorable>());
+
+        Image[] images = GetComponentsInChildren<Image>();
+        for (int i = 0; i < images.Length; ++i)
+        {
+            images[i].raycastTarget = true;
+        }
     }
 }

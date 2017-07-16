@@ -24,12 +24,16 @@ public class CookingWare : Grid
 
     public bool Paused = false;
 
+    [SerializeField]
     private bool _isBurned = false;
     public bool isBurned
     {
         get { return _isBurned; }
         private set
         {
+            if (value == _isBurned)
+                return;
+
             if (value)
             {
                 for (int i = 0; i < blackenList.Count; ++i)
@@ -45,6 +49,8 @@ public class CookingWare : Grid
                     blackenList[i].color = Color.white;
                 }
             }
+
+            _isBurned = value;
         }
     }
 
@@ -85,10 +91,10 @@ public class CookingWare : Grid
 
     private void Update()
     {
-        if (Paused)
+        if (Paused || isBurned)
             return;
 
-        if (!isVacant && !isBurned)
+        if (!isVacant)
         {
             intervalTimer += Time.deltaTime;
             if (steamIndex == steamList.transform.childCount - 1)
@@ -119,6 +125,9 @@ public class CookingWare : Grid
 
     public override void AddItem()
     {
+        if (isBurned)
+            return;
+
         currentTime -= (cookingIntervalTime + (cookingIntervalTime / 2));
         steamList.transform.GetChild(steamIndex).gameObject.SetActive(false);
         steamIndex--;

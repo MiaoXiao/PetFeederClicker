@@ -73,8 +73,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         if (new_grid.transform.childCount >= 2 &&
             GetComponent<IIsStorable>().CanAcceptFood() &&
             !new_grid.isVacant &&
-            new_grid.storedObject.CanAcceptFood() &&
-            ((CookingWare)new_grid) == null)
+            new_grid.storedObject.CanAcceptFood())
         {
 
             print("combine");
