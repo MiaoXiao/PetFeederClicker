@@ -69,7 +69,10 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         //print("moving " + transform.name + " to " + new_grid.name);
         transform.SetParent(new_grid.transform, true);
 
-        if (new_grid.transform.childCount >= 2)
+        if (new_grid.transform.childCount >= 2 &&
+            GetComponent<IIsStorable>().CanAcceptFood() &&
+            !new_grid.isVacant &&
+            new_grid.storedObject.CanAcceptFood())
         {
             print("combine");
 
@@ -116,7 +119,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            print("click");
+            //print("click");
             if (GetCurrentStorage().gridContainerParent is CuttingBoard)
             {
                 originalIngredient.numberOfCuts++;

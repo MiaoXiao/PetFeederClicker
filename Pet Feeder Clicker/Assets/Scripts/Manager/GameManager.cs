@@ -12,12 +12,18 @@ public class GameManager : Singleton<GameManager>
 
     public int totalCutsPerIngredient = 5;
 
+    [Space(10)]
+
     public ObjectPooler extraFoodPooler;
+
+    [Space(10)]
+
+    public bool timerStart = false;
 
     private int currentMinutes;
     private int currentSeconds = 0;
     private float secondCounter = 0f;
-    private bool timerStart = false;
+
 
     //Game Start Up
     private void Awake()

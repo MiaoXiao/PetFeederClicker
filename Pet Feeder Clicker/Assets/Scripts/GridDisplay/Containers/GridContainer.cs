@@ -13,7 +13,7 @@ public class GridContainer : MonoBehaviour
     {
         for (int i = 0; i < transform.childCount; ++i)
         {
-            allGrids.Add(transform.GetChild(i).GetComponent<Grid>());
+            allGrids.Add(transform.GetChild(i).GetComponentInChildren<Grid>());
         }
     }
 

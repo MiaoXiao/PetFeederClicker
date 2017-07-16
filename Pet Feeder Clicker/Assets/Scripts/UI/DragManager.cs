@@ -61,7 +61,7 @@ public class DragManager : Singleton<DragManager>
                 if (distance < lowest_distance)
                 {
                     //Check if found grid has a storable, and if the two storables can be combined
-                    if (current_grid.unlimitedStorage || current_grid.isVacant || (!current_grid.isVacant && current_grid.storedObject.CanAcceptFood()))
+                    if (current_grid.unlimitedStorage || current_grid.isVacant || (!current_grid.isVacant && current_grid.storedObject.CanAcceptFood() && storable.CanAcceptFood()))
                     {
                         lowest_distance = distance;
                         best_grid = current_grid;
