@@ -9,6 +9,9 @@ public class UIManager : Singleton<UIManager>
 
     public Transform viewableTransform;
 
+    [HideInInspector]
+    public Canvas mainCanvas;
+
     [SerializeField]
     private Text clockTimer;
 
@@ -17,7 +20,7 @@ public class UIManager : Singleton<UIManager>
 
     private void Awake()
     {
-        
+        mainCanvas = GetComponent<Canvas>();
     }
 
     /// <summary>
