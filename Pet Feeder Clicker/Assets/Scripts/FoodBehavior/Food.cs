@@ -41,6 +41,19 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         currentImage.sprite = originalIngredient.Ingredient.ingredientSprite;
     }
 
+    private void OnDisable()
+    {
+        for (int i = 0; i < transform.childCount; ++i)
+        {
+            transform.GetChild(i).gameObject.SetActive(false);
+        }
+
+        transform.DetachChildren();
+
+        originalIngredient.numberOfCuts = 0;
+        currentImage.sprite = originalIngredient.Ingredient.ingredientSprite;
+    }
+
     //////////////////////////////////////////
     //Interfaces
     //////////////////////////////////////////
@@ -124,7 +137,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             //print("click");
-            if (GetCurrentStorage().gridContainerParent is CuttingBoard)
+            if (GetCurrentStorage().gridContainerParent is CuttingBoard && originalIngredient.Ingredient.canBeCut)
             {
                 originalIngredient.numberOfCuts++;
                 currentImage.sprite = originalIngredient.currentSprite;
