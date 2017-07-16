@@ -18,24 +18,28 @@ public class DragManager : Singleton<DragManager>
 
     public void BeginDrag(IIsStorable storable)
     {
+        //print("begin");
         //Save last known grid
         lastGrid = storable.GetCurrentStorage();
         //Set parent
         storable.GetTransform().SetParent(UIManager.Instance.viewableTransform, true);
         //Turn off raycast
-        storable.GetTransform().GetComponent<Image>().raycastTarget = false;
+        if (storable.GetTransform().GetComponent<Image>() != null)
+            storable.GetTransform().GetComponent<Image>().raycastTarget = false;
 
         lastPosition = storable.GetTransform().position;
     }
 
     public void UpdateDrag(IIsStorable storable)
     {
+        //print("update");
         //Update position
         storable.SetPosition(new Vector3(Input.mousePosition.x, Input.mousePosition.y));
     }
 
     public void EndDrag(IIsStorable storable)
     {
+        //print("end");
         float lowest_distance = minLockOnDistance;
         Grid best_grid = null;
         bool done_searching = false;

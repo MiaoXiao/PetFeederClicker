@@ -75,6 +75,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
             !new_grid.isVacant &&
             new_grid.storedObject.CanAcceptFood())
         {
+
             print("combine");
 
             //Combine ingredients into one ingredient
@@ -85,6 +86,8 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
             transform.SetParent(null, true);
             gameObject.SetActive(false);
         }
+
+        new_grid.AddItem();
         
     }
 

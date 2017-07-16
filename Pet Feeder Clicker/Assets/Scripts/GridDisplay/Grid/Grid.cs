@@ -31,4 +31,6 @@ public class Grid : MonoBehaviour
     {
         isHoveredOver = false;
     }
+
+    public virtual void AddItem() { }
 }
