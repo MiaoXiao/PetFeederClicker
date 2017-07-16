@@ -15,16 +15,11 @@ public class Grid : MonoBehaviour
         get { return transform.GetChild(0).GetComponent<IIsStorable>(); }
     }
 
-    //private GridContainer gridContainerParent;
+    public GridContainer gridContainerParent { get { return GetComponentInParent<GridContainer>(); } }
 
     public bool isVacant
     {
         get { return transform.childCount == 0; }
-    }
-
-    private void Awake()
-    {
-        //gridContainerParent = GetComponentInParent<GridContainer>();
     }
 
     public void PointerEnter()
