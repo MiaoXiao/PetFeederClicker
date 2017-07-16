@@ -66,6 +66,9 @@ public class GameManager : Singleton<GameManager>
 
         //Close Tips
         UIManager.Instance.tipController.CloseAllTips();
+
+        //Generate recipe
+        RecipeRandomizer.Instance.StartGeneration();
     }
 
     /// <summary>

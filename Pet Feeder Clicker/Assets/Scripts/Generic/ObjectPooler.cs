@@ -7,8 +7,7 @@ public class ObjectPooler : MonoBehaviour
     [SerializeField]
     private Transform Container;
 
-    [SerializeField]
-    private GameObject objectToPool;
+    public GameObject objectToPool;
 
     [SerializeField]
     private int numberToPool = 10;
