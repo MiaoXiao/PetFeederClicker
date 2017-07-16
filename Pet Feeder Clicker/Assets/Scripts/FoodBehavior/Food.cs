@@ -43,6 +43,9 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 
     private void OnDisable()
     {
+        if (GameManager.Instance == null)
+            return;
+        
         for (int i = 0; i < transform.childCount; ++i)
         {
             transform.GetChild(i).gameObject.SetActive(false);
