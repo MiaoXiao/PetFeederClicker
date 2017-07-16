@@ -9,6 +9,8 @@ public class IngredientData : ScriptableObject
     public Sprite ingredientSprite;
     public Sprite cutIngredientSprite;
 
+    public bool canBeCut = true;
+
     [Space(10)]
 
     public Color fullyCookedTint = Color.gray;
