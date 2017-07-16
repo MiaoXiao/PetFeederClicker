@@ -21,9 +21,4 @@ public class GridContainer : MonoBehaviour
     {
         DragManager.Instance.currentlyActiveContainers.Add(this);
     }
-
-    private void OnDisable()
-    {
-        DragManager.Instance.currentlyActiveContainers.Remove(this);
-    }
 }

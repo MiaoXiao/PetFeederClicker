@@ -31,28 +31,20 @@ public class GameManager : Singleton<GameManager>
         ShowTutorial();
     }
 
-    private void Update()
+    private IEnumerator TickSecond()
     {
-        if (timerStart)
+        while(timerStart)
         {
-            secondCounter += Time.deltaTime;
-            if (secondCounter >= 1f)
+            yield return new WaitForSeconds(1f);
+            currentSeconds--;
+            if (currentSeconds == 0 && currentMinutes == 0)
             {
-                if (currentSeconds == 1 && currentMinutes == 0)
-                {
-                    EndGame();
-                }
-                else if (currentSeconds == 0)
-                {
-                    currentMinutes--;
-                    currentSeconds = 59;
-                }
-                else
-                {
-                    currentSeconds--;
-                }
-
-                secondCounter = 0f;
+                EndGame();
+            }
+            else if (currentSeconds == -1)
+            {
+                currentMinutes--;
+                currentSeconds = 59;
             }
             UIManager.Instance.SetTime(currentMinutes, currentSeconds);
         }
@@ -66,9 +58,11 @@ public class GameManager : Singleton<GameManager>
         //Timer init
         currentMinutes = startingMinutes;
         currentSeconds = 0;
-        secondCounter = 0f;
         UIManager.Instance.SetTime(currentMinutes, currentSeconds);
         timerStart = true;
+        StartCoroutine(TickSecond());
+
+        IngredientSpawner.Instance.StartSpawner();
 
         //Close Tips
         UIManager.Instance.tipController.CloseAllTips();
@@ -91,6 +85,7 @@ public class GameManager : Singleton<GameManager>
     private void EndGame()
     {
         print("end");
+        IngredientSpawner.Instance.spawnerStart = false;
         timerStart = false;
     }
 

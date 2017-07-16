@@ -18,6 +18,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
             otherIngredients.Add(other[i].Clone());
             GameObject ingredient = GameManager.Instance.extraFoodPooler.GetObject();
             ingredient.transform.SetParent(transform, true);
+            ingredient.transform.position = transform.position;
             ingredient.GetComponent<Image>().sprite = other[i].currentSprite;
         }
     }
