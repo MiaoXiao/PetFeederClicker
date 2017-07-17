@@ -88,7 +88,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         //print("moving " + transform.name + " to " + new_grid.name);
         transform.SetParent(new_grid.transform, true);
 
-        if (new_grid.IsWindow())
+        if (new_grid.IsWindow() && originalIngredient.fullyCut)
         {
             //Check if scoring
             RecipeRandomizer.Instance.CheckValidRecipe(gameObject, false, true, false);

@@ -180,49 +180,40 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         int chooser = Random.Range(0, easyRecipes.Count + normalRecipes.Count + 1);
         if (force_easy || chooser <= easyRecipes.Count)
         {
-            //Make easy
-            int index = Random.Range(0, easyRecipes.Count);
-            RecipeHandler recipe = easyRecipes[index];
+            RecipeHandler recipe;
+            bool finish = false;
+            do
+            {
+                //Make easy
+                int index = Random.Range(0, easyRecipes.Count);
+                print("easy index " + index);
+                recipe = easyRecipes[index];
+
+                if (recipe.transform.parent == null || recipe.transform.parent.name != "Recipe Grid")
+                    finish = true;
+            } while (!finish);
+
 
             recipe.transform.SetParent(shownRecipe.allGrids[slot].transform, true);
-            easyRecipes.Remove(recipe);
-
-            if (easyRecipes.Count == 0)
-            {
-                print("out of easy");
-                InitEasyRecipes();
-
-                int index2 = Random.Range(0, easyRecipes.Count);
-                RecipeHandler recipe2 = easyRecipes[index2];
-
-                recipe.transform.SetParent(shownRecipe.allGrids[slot].transform, true);
-                print("add " + recipe2.name);
-                easyRecipes.Remove(recipe2);
-            }
-
+            recipe.transform.gameObject.SetActive(true);
         }
         else
         {
-            //Make normal
-            int index = Random.Range(0, normalRecipes.Count);
-            RecipeHandler recipe = normalRecipes[index];
+            RecipeHandler recipe;
+            bool finish = false;
+            do
+            {
+                //Make easy
+                int index = Random.Range(0, normalRecipes.Count);
+                print("normal index " + index);
+                recipe = normalRecipes[index];
+
+                if (recipe.transform.parent == null || recipe.transform.parent.name != "Recipe Grid")
+                    finish = true;
+            } while (!finish);
 
             recipe.transform.SetParent(shownRecipe.allGrids[slot].transform, true);
-            normalRecipes.Remove(recipe);
-
-            if (normalRecipes.Count == 0)
-            {
-                print("out of normal");
-                InitNormalRecipes();
-
-                int index2 = Random.Range(0, normalRecipes.Count);
-                RecipeHandler recipe2 = normalRecipes[index2];
-
-                recipe.transform.SetParent(shownRecipe.allGrids[slot].transform, true);
-                normalRecipes.Remove(recipe2);
-                print("add " + recipe2.name);
-            }
-
+            recipe.transform.gameObject.SetActive(true);
         }
 
 
