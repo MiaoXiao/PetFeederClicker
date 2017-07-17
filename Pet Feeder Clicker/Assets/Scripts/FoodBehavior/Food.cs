@@ -144,6 +144,10 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
             {
                 originalIngredient.numberOfCuts++;
                 currentImage.sprite = originalIngredient.currentSprite;
+
+                //Display particles
+
+
             }
 
         }
