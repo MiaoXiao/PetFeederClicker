@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class WindowGrid : Grid
 {
-
+    public override bool IsWindow() { return true; }
 }

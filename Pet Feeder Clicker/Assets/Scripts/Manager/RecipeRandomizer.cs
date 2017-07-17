@@ -30,30 +30,48 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         generatedEasy = numberOfInitialEasy;
     }
 
-    private List<IngredientPrepration> SetUpIngredientList(GameObject food_collection)
+    private List<IngredientPrepration> SetUpIngredientList(GameObject food_collection, bool special)
     {
         //create list of ingredients
-        List<IngredientPrepration> ingredient_list = new List<IngredientPrepration>();
-        for (int i = 0; i < food_collection.transform.childCount; ++i)
+        if (!special)
         {
-            ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().originalIngredient);
-            ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
-            for (int j = 0; j < food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients.Count; ++j)
+            List<IngredientPrepration> ingredient_list = new List<IngredientPrepration>();
+            for (int i = 0; i < food_collection.transform.childCount; ++i)
             {
-                ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients[j]);
+                ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().originalIngredient);
                 ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
+                for (int j = 0; j < food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients.Count; ++j)
+                {
+                    ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients[j]);
+                    ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
+                }
             }
+            return ingredient_list;
         }
-        return ingredient_list;
+        else
+        {
+            List<IngredientPrepration> ingredient_list = new List<IngredientPrepration>();
+            for (int i = 0; i < food_collection.transform.childCount; ++i)
+            {
+                ingredient_list.Add(food_collection.GetComponent<Food>().originalIngredient);
+                ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
+                for (int j = 0; j < food_collection.GetComponent<Food>().otherIngredients.Count; ++j)
+                {
+                    ingredient_list.Add(food_collection.GetComponent<Food>().otherIngredients[j]);
+                    ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
+                }
+            }
+            return ingredient_list;
+        }
     }
 
-    public void CheckValidRecipe(GameObject food_collection, bool pot)
+    public void CheckValidRecipe(GameObject food_collection, bool pot, bool special)
     {
         //Compare with current recipes
         bool recipe_found = false;
         for(int i = 0; i < shownRecipe.allGrids.Count && !recipe_found; ++i)
         {
-            List<IngredientPrepration> ingredient_list = SetUpIngredientList(food_collection);
+            List<IngredientPrepration> ingredient_list = SetUpIngredientList(food_collection, special);
             bool recipe_check_failed = false;
             RecipeHandler recipe_handler = shownRecipe.allGrids[i].transform.GetChild(0).GetComponent<RecipeHandler>();
             if ((recipe_handler.recipeData.canUsePot == pot || recipe_handler.recipeData.canUsePan == !pot) && !recipe_handler.Completed)
@@ -104,7 +122,7 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         {
             int cut_ingre = 0;
             int uncut_ingre = 0;
-            List<IngredientPrepration> ingre_prep = SetUpIngredientList(food_collection);
+            List<IngredientPrepration> ingre_prep = SetUpIngredientList(food_collection, special);
             for (int i = 0; i < ingre_prep.Count; ++i)
             {
                 if (ingre_prep[i].fullyCut)
@@ -125,6 +143,11 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
             food_collection.transform.GetChild(i).gameObject.SetActive(false);
         }
         food_collection.transform.DetachChildren();
+
+        if (special)
+        {
+
+        }
     }
 
     public void RemoveRecipe(int slot)
@@ -162,7 +185,18 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
             easyRecipes.Remove(recipe);
 
             if (easyRecipes.Count == 0)
+            {
+                print("out of easy");
                 InitEasyRecipes();
+
+                int index2 = Random.Range(0, easyRecipes.Count);
+                RecipeHandler recipe2 = easyRecipes[index2];
+
+                recipe.transform.SetParent(shownRecipe.allGrids[slot].transform, true);
+                print("add " + recipe2.name);
+                easyRecipes.Remove(recipe2);
+            }
+
         }
         else
         {
@@ -174,7 +208,18 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
             normalRecipes.Remove(recipe);
 
             if (normalRecipes.Count == 0)
+            {
+                print("out of normal");
                 InitNormalRecipes();
+
+                int index2 = Random.Range(0, normalRecipes.Count);
+                RecipeHandler recipe2 = normalRecipes[index2];
+
+                recipe.transform.SetParent(shownRecipe.allGrids[slot].transform, true);
+                normalRecipes.Remove(recipe2);
+                print("add " + recipe2.name);
+            }
+
         }
 
 
@@ -186,7 +231,11 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         for (int i = 0; i < allRecipes.Count; ++i)
         {
             if (allRecipes[i].recipeData.recipeType == RecipeType.Easy)
+            {
+                print("readding easy");
                 easyRecipes.Add(allRecipes[i]);
+            }
+
         }
     }
 
@@ -196,7 +245,11 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         for (int i = 0; i < allRecipes.Count; ++i)
         {
             if (allRecipes[i].recipeData.recipeType == RecipeType.Normal)
+            {
+                print("readding normal");
                 normalRecipes.Add(allRecipes[i]);
+            }
+
         }
     }
 }

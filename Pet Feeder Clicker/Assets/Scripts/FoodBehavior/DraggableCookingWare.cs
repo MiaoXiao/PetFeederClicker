@@ -48,7 +48,7 @@ public class DraggableCookingWare : MonoBehaviour
             print("attempt score");
             if (cookingWare.transform.childCount != 0)
             {
-                RecipeRandomizer.Instance.CheckValidRecipe(cookingWare.gameObject, isPot);
+                RecipeRandomizer.Instance.CheckValidRecipe(cookingWare.gameObject, isPot, false);
             }
             else
             {

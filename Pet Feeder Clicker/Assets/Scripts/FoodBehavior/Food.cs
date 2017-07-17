@@ -88,7 +88,11 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         //print("moving " + transform.name + " to " + new_grid.name);
         transform.SetParent(new_grid.transform, true);
 
-        //if (new_grid.isHoveredOver)
+        if (new_grid.IsWindow())
+        {
+            //Check if scoring
+            RecipeRandomizer.Instance.CheckValidRecipe(gameObject, false, true);
+        }
 
         if (new_grid.transform.childCount >= 2 &&
             GetComponent<IIsStorable>().CanAcceptFood() &&

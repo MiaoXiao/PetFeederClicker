@@ -33,4 +33,5 @@ public class Grid : MonoBehaviour
     }
 
     public virtual void AddItem() { }
+    public virtual bool IsWindow() { return false; }
 }
