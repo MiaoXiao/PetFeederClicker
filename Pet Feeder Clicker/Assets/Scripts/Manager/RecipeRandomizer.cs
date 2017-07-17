@@ -30,6 +30,11 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         generatedEasy = numberOfInitialEasy;
     }
 
+    public void CheckValidRecipe(Food food_collection)
+    {
+        print("points or trash");
+    }
+
     public void RemoveRecipe(int slot)
     {
         if (generatedEasy == numberOfInitialEasy)
@@ -79,7 +84,7 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
             if (normalRecipes.Count == 0)
                 InitNormalRecipes();
         }
-        
+
 
     }
 

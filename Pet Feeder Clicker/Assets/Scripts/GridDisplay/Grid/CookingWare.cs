@@ -123,6 +123,16 @@ public class CookingWare : Grid
 
     }
 
+    public void Reset()
+    {
+        isBurned = false;
+        currentTime = 0f;
+        ClearAllSteam();
+        steamIndex = 0;
+        Paused = false;
+        //for (int i = 0; i < transform.GetChild(i).)
+    }
+
     public override void AddItem()
     {
         if (isBurned)

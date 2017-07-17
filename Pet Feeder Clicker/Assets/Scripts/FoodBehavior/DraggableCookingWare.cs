@@ -12,6 +12,9 @@ public class DraggableCookingWare : MonoBehaviour
     [SerializeField]
     private CookingWare cookingWare;
 
+    [SerializeField]
+    private WindowGrid windowGrid;
+
     public void BeginDrag()
     {
         cookingWare.Paused = true;
@@ -35,7 +38,24 @@ public class DraggableCookingWare : MonoBehaviour
 
     public void EndDrag()
     {
+        print("end");
+        print(windowGrid.isHoveredOver);
         //TODO: Check for possible trashing or scoring food
+        if (windowGrid.isHoveredOver)
+        {
+            print("attempt score");
+            if (cookingWare.transform.childCount != 0)
+            {
+                RecipeRandomizer.Instance.CheckValidRecipe(cookingWare.transform.GetChild(0).GetComponent<Food>());
+                //Reset cookingware
+                cookingWare.Reset();
+            }
+            else
+            {
+                print("empty");
+            }
+
+        }
 
         //Restore original position
         transform.position = lastPosition;

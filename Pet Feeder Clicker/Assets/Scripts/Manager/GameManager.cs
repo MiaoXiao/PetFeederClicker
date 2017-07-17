@@ -99,4 +99,12 @@ public class GameManager : Singleton<GameManager>
     {
         Application.Quit();
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown("escape"))
+        {
+            QuitGame();
+        }
+    }
 }
