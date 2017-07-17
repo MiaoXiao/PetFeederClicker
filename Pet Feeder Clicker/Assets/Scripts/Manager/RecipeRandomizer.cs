@@ -65,57 +65,60 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         }
     }
 
-    public void CheckValidRecipe(GameObject food_collection, bool pot, bool special)
+    public void CheckValidRecipe(GameObject food_collection, bool pot, bool special, bool is_burned)
     {
-        //Compare with current recipes
         bool recipe_found = false;
-        for(int i = 0; i < shownRecipe.allGrids.Count && !recipe_found; ++i)
+        if (!is_burned)
         {
-            List<IngredientPrepration> ingredient_list = SetUpIngredientList(food_collection, special);
-            bool recipe_check_failed = false;
-            RecipeHandler recipe_handler = shownRecipe.allGrids[i].transform.GetChild(0).GetComponent<RecipeHandler>();
-            if ((recipe_handler.recipeData.canUsePot == pot || recipe_handler.recipeData.canUsePan == !pot) && !recipe_handler.Completed)
+            for (int i = 0; i < shownRecipe.allGrids.Count && !recipe_found; ++i)
             {
-                for (int j = 0; j < recipe_handler.recipeData.recipeList.Count && !recipe_check_failed; ++j)
+                List<IngredientPrepration> ingredient_list = SetUpIngredientList(food_collection, special);
+                bool recipe_check_failed = false;
+                RecipeHandler recipe_handler = shownRecipe.allGrids[i].transform.GetChild(0).GetComponent<RecipeHandler>();
+                if ((recipe_handler.recipeData.canUsePot == pot || recipe_handler.recipeData.canUsePan == !pot) && !recipe_handler.Completed)
                 {
-                    bool correct_ingredient_found = false;
-                    for(int k = 0; k < ingredient_list.Count && !correct_ingredient_found; ++k)
+                    for (int j = 0; j < recipe_handler.recipeData.recipeList.Count && !recipe_check_failed; ++j)
                     {
-                        print("comparing " + recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name + " to " + ingredient_list[k].Ingredient.name);
-                        //Try to find ingredient match from recipe to ingredeint list
-                        if (recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name == ingredient_list[k].Ingredient.name &&
-                            recipe_handler.recipeData.recipeList[j].mustBeChopped == ingredient_list[k].fullyCut)
+                        bool correct_ingredient_found = false;
+                        for (int k = 0; k < ingredient_list.Count && !correct_ingredient_found; ++k)
                         {
-                            correct_ingredient_found = true;
-                            ingredient_list[k].hasBeenChecked = true;
-                            break;
+                            print("comparing " + recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name + " to " + ingredient_list[k].Ingredient.name);
+                            //Try to find ingredient match from recipe to ingredeint list
+                            if (recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name == ingredient_list[k].Ingredient.name &&
+                                recipe_handler.recipeData.recipeList[j].mustBeChopped == ingredient_list[k].fullyCut)
+                            {
+                                correct_ingredient_found = true;
+                                ingredient_list[k].hasBeenChecked = true;
+                                break;
+                            }
                         }
+
+                        if (!correct_ingredient_found)
+                        {
+                            recipe_check_failed = true;
+                            print("incorrect match with recipe " + recipe_handler.name);
+                        }
+
                     }
 
-                    if (!correct_ingredient_found)
+                    print(recipe_handler.totalIngredientsNeeded + " == " + ingredient_list.Count);
+                    if (!recipe_check_failed && recipe_handler.totalIngredientsNeeded == ingredient_list.Count)
                     {
-                        recipe_check_failed = true;
-                        print("incorrect match with recipe " + recipe_handler.name);
+                        print("Recipe Match found with " + recipe_handler.name);
+                        GameManager.Instance.currentScore += recipe_handler.recipeData.Points;
+                        UIManager.Instance.SetScore(GameManager.Instance.currentScore);
+                        recipe_handler.Completed = true;
+                        recipe_found = true;
+
                     }
-
                 }
-
-                print(recipe_handler.totalIngredientsNeeded + " == " + ingredient_list.Count);
-                if (!recipe_check_failed && recipe_handler.totalIngredientsNeeded == ingredient_list.Count)
+                else
                 {
-                    print("Recipe Match found with " + recipe_handler.name);
-                    GameManager.Instance.currentScore += recipe_handler.recipeData.Points;
-                    UIManager.Instance.SetScore(GameManager.Instance.currentScore);
-                    recipe_handler.Completed = true;
-                    recipe_found = true;
-
+                    print("incorrect cooking ware with " + recipe_handler.name);
                 }
-            }
-            else
-            {
-                print("incorrect cooking ware with " + recipe_handler.name);
             }
         }
+       
 
         //Score discard bonus if neccesary
         if (!recipe_found)
@@ -146,7 +149,7 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
 
         if (special)
         {
-
+            food_collection.SetActive(false);
         }
     }
 
@@ -232,7 +235,6 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         {
             if (allRecipes[i].recipeData.recipeType == RecipeType.Easy)
             {
-                print("readding easy");
                 easyRecipes.Add(allRecipes[i]);
             }
 
@@ -246,7 +248,6 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         {
             if (allRecipes[i].recipeData.recipeType == RecipeType.Normal)
             {
-                print("readding normal");
                 normalRecipes.Add(allRecipes[i]);
             }
 

@@ -91,7 +91,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         if (new_grid.IsWindow())
         {
             //Check if scoring
-            RecipeRandomizer.Instance.CheckValidRecipe(gameObject, false, true);
+            RecipeRandomizer.Instance.CheckValidRecipe(gameObject, false, true, false);
         }
 
         if (new_grid.transform.childCount >= 2 &&
