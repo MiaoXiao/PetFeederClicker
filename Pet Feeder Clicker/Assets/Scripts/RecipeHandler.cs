@@ -93,7 +93,6 @@ public class RecipeHandler : MonoBehaviour, IPointerDownHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            RecipeRandomizer.Instance.RemoveRecipe(transform.parent.GetSiblingIndex());
             if (Completed)
             {
                 Completed = false;
@@ -103,6 +102,7 @@ public class RecipeHandler : MonoBehaviour, IPointerDownHandler
                 GameManager.Instance.currentScore -= GameManager.Instance.scorePenalty;
                 UIManager.Instance.SetScore(GameManager.Instance.currentScore);
             }
+            RecipeRandomizer.Instance.RemoveRecipe(transform.parent.GetSiblingIndex());
         }
     }
 }

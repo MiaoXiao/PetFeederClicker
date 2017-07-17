@@ -55,6 +55,8 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 
         originalIngredient.numberOfCuts = 0;
         currentImage.sprite = originalIngredient.Ingredient.ingredientSprite;
+
+        GetComponent<Image>().raycastTarget = true;
     }
 
     //////////////////////////////////////////
@@ -85,6 +87,8 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
     {
         //print("moving " + transform.name + " to " + new_grid.name);
         transform.SetParent(new_grid.transform, true);
+
+        //if (new_grid.isHoveredOver)
 
         if (new_grid.transform.childCount >= 2 &&
             GetComponent<IIsStorable>().CanAcceptFood() &&
