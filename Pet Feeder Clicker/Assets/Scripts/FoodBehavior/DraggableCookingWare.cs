@@ -43,7 +43,7 @@ public class DraggableCookingWare : MonoBehaviour
         print("end");
         print(windowGrid.isHoveredOver);
         //TODO: Check for possible trashing or scoring food
-        if (windowGrid.isHoveredOver)
+        if (windowGrid.isHoveredOver && cookingWare.finishedCooking)
         {
             print("attempt score");
             if (cookingWare.transform.childCount != 0)

@@ -10,7 +10,13 @@ public class CookingWare : Grid
     [SerializeField]
     private float lastIntervalTime = 2f;
 
-    [Space(10)]
+    public bool finishedCooking
+    {
+        get
+        {
+            return steamIndex >= 3;
+        }
+    }
 
     [SerializeField]
     private List<Image> blackenList = new List<Image>();

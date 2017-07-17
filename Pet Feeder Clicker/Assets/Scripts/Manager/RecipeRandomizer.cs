@@ -30,28 +30,101 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         generatedEasy = numberOfInitialEasy;
     }
 
-    public void CheckValidRecipe(GameObject food_collection, bool pot)
+    private List<IngredientPrepration> SetUpIngredientList(GameObject food_collection)
     {
-       //create list of ingredients
+        //create list of ingredients
         List<IngredientPrepration> ingredient_list = new List<IngredientPrepration>();
         for (int i = 0; i < food_collection.transform.childCount; ++i)
         {
             ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().originalIngredient);
+            ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
             for (int j = 0; j < food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients.Count; ++j)
             {
                 ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients[j]);
+                ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
             }
         }
+        return ingredient_list;
+    }
 
+    public void CheckValidRecipe(GameObject food_collection, bool pot)
+    {
         //Compare with current recipes
-        for(int i = 0; i < shownRecipe.allGrids.Count; ++i)
+        bool recipe_found = false;
+        for(int i = 0; i < shownRecipe.allGrids.Count && !recipe_found; ++i)
         {
+            List<IngredientPrepration> ingredient_list = SetUpIngredientList(food_collection);
+            bool recipe_check_failed = false;
             RecipeHandler recipe_handler = shownRecipe.allGrids[i].transform.GetChild(0).GetComponent<RecipeHandler>();
-            if (recipe_handler.recipeData.canUsePot == pot || recipe_handler.recipeData.canUsePan == !pot)
+            if ((recipe_handler.recipeData.canUsePot == pot || recipe_handler.recipeData.canUsePan == !pot) && !recipe_handler.Completed)
             {
+                for (int j = 0; j < recipe_handler.recipeData.recipeList.Count && !recipe_check_failed; ++j)
+                {
+                    bool correct_ingredient_found = false;
+                    for(int k = 0; k < ingredient_list.Count && !correct_ingredient_found; ++k)
+                    {
+                        print("comparing " + recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name + " to " + ingredient_list[k].Ingredient.name);
+                        //Try to find ingredient match from recipe to ingredeint list
+                        if (recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name == ingredient_list[k].Ingredient.name &&
+                            recipe_handler.recipeData.recipeList[j].mustBeChopped == ingredient_list[k].fullyCut)
+                        {
+                            correct_ingredient_found = true;
+                            ingredient_list[k].hasBeenChecked = true;
+                            break;
+                        }
+                    }
 
+                    if (!correct_ingredient_found)
+                    {
+                        recipe_check_failed = true;
+                        print("incorrect match with recipe " + recipe_handler.name);
+                    }
+
+                }
+
+                print(recipe_handler.totalIngredientsNeeded + " == " + ingredient_list.Count);
+                if (!recipe_check_failed && recipe_handler.totalIngredientsNeeded == ingredient_list.Count)
+                {
+                    print("Recipe Match found with " + recipe_handler.name);
+                    GameManager.Instance.currentScore += recipe_handler.recipeData.Points;
+                    UIManager.Instance.SetScore(GameManager.Instance.currentScore);
+                    recipe_handler.Completed = true;
+                    recipe_found = true;
+
+                }
+            }
+            else
+            {
+                print("incorrect cooking ware with " + recipe_handler.name);
             }
         }
+
+        //Score discard bonus if neccesary
+        if (!recipe_found)
+        {
+            int cut_ingre = 0;
+            int uncut_ingre = 0;
+            List<IngredientPrepration> ingre_prep = SetUpIngredientList(food_collection);
+            for (int i = 0; i < ingre_prep.Count; ++i)
+            {
+                if (ingre_prep[i].fullyCut)
+                    cut_ingre++;
+                else
+                    uncut_ingre++;
+            }
+
+            int discard_bonus = (uncut_ingre * GameManager.Instance.discardBonus) + (cut_ingre * GameManager.Instance.discardBonus * 2);
+            GameManager.Instance.currentScore += discard_bonus;
+            UIManager.Instance.SetScore(GameManager.Instance.currentScore);
+        }
+
+        //Discard contents
+        for (int i = 0; i < food_collection.transform.childCount; ++i)
+        {
+            print("trashing " + food_collection.transform.GetChild(i).gameObject.name);
+            food_collection.transform.GetChild(i).gameObject.SetActive(false);
+        }
+        food_collection.transform.DetachChildren();
     }
 
     public void RemoveRecipe(int slot)

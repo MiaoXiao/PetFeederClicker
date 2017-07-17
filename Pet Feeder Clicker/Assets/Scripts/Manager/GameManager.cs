@@ -5,10 +5,25 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    public int currentScore = 0;
+    private int _currentScore = 0;
+    public int currentScore
+    {
+        get { return _currentScore; }
+        set
+        {
+            if (value < 0)
+                _currentScore = 0;
+            else
+                _currentScore = value;
+        }
+    }
+
+    public int discardBonus = 10;
 
     [Tooltip("Length of game."), SerializeField]
     private int startingMinutes = 5;
+
+    public int scorePenalty = 20;
 
     public int totalCutsPerIngredient = 5;
 
@@ -21,7 +36,7 @@ public class GameManager : Singleton<GameManager>
     public bool timerStart = false;
 
     private int currentMinutes;
-    private int currentSeconds = 0;
+    public int currentSeconds = 0;
     private float secondCounter = 0f;
 
 

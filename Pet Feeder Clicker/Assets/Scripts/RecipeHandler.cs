@@ -1,13 +1,48 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class RecipeHandler : MonoBehaviour
+public class RecipeHandler : MonoBehaviour, IPointerDownHandler
 {
     public RecipeData recipeData;
 
-    public bool Completed = false;
+    private bool _Completed = false;
+    public bool Completed
+    {
+        get { return _Completed; }
+        set
+        {
+            if (value == _Completed)
+                return;
+
+            if (value)
+            {
+                transform.parent.GetComponent<Image>().color = Color.green;
+            }
+            else
+            {
+                transform.parent.GetComponent<Image>().color = Color.white;
+            }
+
+            _Completed = value;
+        }
+    }
+
+    public int totalIngredientsNeeded
+    {
+        get
+        {
+            int total = 0;
+            for (int i = 0; i < recipeData.recipeList.Count; ++i)
+            {
+                total += recipeData.recipeList[i].Amount;
+            }
+            return total;
+        }
+    }
 
     [SerializeField]
     private GameObject recipeRequirements;
@@ -51,6 +86,23 @@ public class RecipeHandler : MonoBehaviour
         {
             recipeRequirements.transform.GetChild(i).gameObject.SetActive(false);
             ++i;
+        }
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            RecipeRandomizer.Instance.RemoveRecipe(transform.parent.GetSiblingIndex());
+            if (Completed)
+            {
+                Completed = false;
+            }
+            else
+            {
+                GameManager.Instance.currentScore -= GameManager.Instance.scorePenalty;
+                UIManager.Instance.SetScore(GameManager.Instance.currentScore);
+            }
         }
     }
 }

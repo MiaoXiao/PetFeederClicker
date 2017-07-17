@@ -180,7 +180,7 @@ public class IngredientPrepration
             //TODO: show cutting particles
         }
     }
-
+    public bool hasBeenChecked = false;
     public Sprite currentSprite;
 
     public IngredientPrepration Clone()
@@ -189,6 +189,7 @@ public class IngredientPrepration
         new_prep._numberOfCuts = _numberOfCuts;
         new_prep.currentSprite = currentSprite;
         new_prep.Ingredient = Ingredient;
+        new_prep.hasBeenChecked = false;
         return new_prep;
     }
 }
