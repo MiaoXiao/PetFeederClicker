@@ -7,6 +7,8 @@ public class RecipeHandler : MonoBehaviour
 {
     public RecipeData recipeData;
 
+    public bool Completed = false;
+
     [SerializeField]
     private GameObject recipeRequirements;
 

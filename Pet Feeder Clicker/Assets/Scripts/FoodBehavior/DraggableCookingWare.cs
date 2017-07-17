@@ -9,6 +9,8 @@ public class DraggableCookingWare : MonoBehaviour
     private Vector3 lastPosition;
     private Transform lastParent;
 
+    public bool isPot = false;
+
     [SerializeField]
     private CookingWare cookingWare;
 
@@ -46,14 +48,14 @@ public class DraggableCookingWare : MonoBehaviour
             print("attempt score");
             if (cookingWare.transform.childCount != 0)
             {
-                RecipeRandomizer.Instance.CheckValidRecipe(cookingWare.transform.GetChild(0).GetComponent<Food>());
-                //Reset cookingware
-                cookingWare.Reset();
+                RecipeRandomizer.Instance.CheckValidRecipe(cookingWare.gameObject, isPot);
             }
             else
             {
                 print("empty");
             }
+            //Reset cookingware
+            cookingWare.Reset();
 
         }
 
