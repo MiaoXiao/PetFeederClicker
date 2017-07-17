@@ -103,6 +103,7 @@ public class RecipeHandler : MonoBehaviour, IPointerDownHandler
                 UIManager.Instance.SetScore(GameManager.Instance.currentScore);
             }
             RecipeRandomizer.Instance.RemoveRecipe(transform.parent.GetSiblingIndex());
+            AudioMana.Instance.PlayRip();
         }
     }
 }

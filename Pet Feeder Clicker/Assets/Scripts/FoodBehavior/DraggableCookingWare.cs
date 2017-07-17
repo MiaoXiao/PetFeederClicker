@@ -19,6 +19,8 @@ public class DraggableCookingWare : MonoBehaviour
 
     public void BeginDrag()
     {
+        AudioMana.Instance.PlayPickUp();
+
         cookingWare.Paused = true;
         lastPosition = transform.position;
         lastParent = transform.parent.transform;

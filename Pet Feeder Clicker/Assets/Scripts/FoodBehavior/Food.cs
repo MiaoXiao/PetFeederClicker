@@ -13,11 +13,13 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 
     public void AddFood(List<IngredientPrepration> other)
     {
+        print(other.Count);
         for (int i = 0; i < other.Count; ++i)
         {
+
             otherIngredients.Add(other[i].Clone());
             GameObject ingredient = GameManager.Instance.extraFoodPooler.GetObject();
-            ingredient.transform.SetParent(transform, true);
+            ingredient.transform.SetParent(transform, true);;
             ingredient.transform.position = transform.position;
             ingredient.GetComponent<Image>().sprite = other[i].currentSprite;
         }
@@ -83,8 +85,10 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         transform.position = pos;
     }
 
+    int x = 0;
     public void SetStorage(Grid new_grid)
     {
+
         //print("moving " + transform.name + " to " + new_grid.name);
         transform.SetParent(new_grid.transform, true);
 
@@ -94,22 +98,30 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
             RecipeRandomizer.Instance.CheckValidRecipe(gameObject, false, true, false);
         }
 
+
         if (new_grid.transform.childCount >= 2 &&
             GetComponent<IIsStorable>().CanAcceptFood() &&
             !new_grid.isVacant &&
             new_grid.storedObject.CanAcceptFood())
         {
+            x++;
 
             print("combine");
 
+
             //Combine ingredients into one ingredient
-            otherIngredients.Add(originalIngredient);
+            otherIngredients.Add(originalIngredient.Clone());
             new_grid.storedObject.GetTransform().GetComponent<Food>().AddFood(otherIngredients);
+
 
             //Remove this object
             transform.SetParent(null, true);
             gameObject.SetActive(false);
+            
+
         }
+
+
 
         new_grid.AddItem();
         
@@ -155,6 +167,8 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 
                 //Display particles
 
+                //TODO: show cutting particles
+                AudioMana.Instance.PlayChoppoing();
 
             }
 
@@ -188,8 +202,6 @@ public class IngredientPrepration
                 _numberOfCuts = value;
                 currentSprite = Ingredient.ingredientSprite;
             }
-
-            //TODO: show cutting particles
         }
     }
     public bool hasBeenChecked = false;

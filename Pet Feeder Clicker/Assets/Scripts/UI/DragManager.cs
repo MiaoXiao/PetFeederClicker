@@ -18,6 +18,7 @@ public class DragManager : Singleton<DragManager>
 
     public void BeginDrag(IIsStorable storable)
     {
+        AudioMana.Instance.PlayPickUp();
         //print("begin");
         //Save last known grid
         lastGrid = storable.GetCurrentStorage();
@@ -36,9 +37,11 @@ public class DragManager : Singleton<DragManager>
         //Update position
         storable.SetPosition(new Vector3(Input.mousePosition.x, Input.mousePosition.y));
     }
-
+    int x = 0;
     public void EndDrag(IIsStorable storable)
     {
+        x++;
+
         //print("end");
         float lowest_distance = minLockOnDistance;
         Grid best_grid = null;
@@ -49,6 +52,7 @@ public class DragManager : Singleton<DragManager>
             GridContainer current_container = currentlyActiveContainers[i];
             for (int j = 0; j < current_container.allGrids.Count; ++j)
             {
+
                 Grid current_grid = current_container.allGrids[j];
 
                 if (!current_container.allowedTypes.Contains(storable.GetTypeName()))
@@ -60,17 +64,20 @@ public class DragManager : Singleton<DragManager>
                     done_searching = true;
                     break;
                 }
-                
+
                 float distance = Vector2.Distance(current_grid.transform.position, Input.mousePosition);
                 if (distance < lowest_distance)
                 {
                     //Check if found grid has a storable, and if the two storables can be combined
                     if (current_grid.unlimitedStorage || current_grid.isVacant || (!current_grid.isVacant && current_grid.storedObject.CanAcceptFood() && storable.CanAcceptFood()))
                     {
+
                         lowest_distance = distance;
                         best_grid = current_grid;
+                        
                     }
                 }
+                
             }
         }
 
@@ -82,8 +89,11 @@ public class DragManager : Singleton<DragManager>
         }
         else
         {
-            //Found best grid
-            storable.SetStorage(best_grid);
+            //if (x < 7)
+            //{
+                //Found best grid
+                storable.SetStorage(best_grid);
+            //}
         }
 
         //Remove reference to last grid

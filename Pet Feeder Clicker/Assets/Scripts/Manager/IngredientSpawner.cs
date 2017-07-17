@@ -63,6 +63,7 @@ public class IngredientSpawner : Singleton<IngredientSpawner>
 
     public void SpawnWave()
     {
+        AudioMana.Instance.PlayWind();
         //Clear all outside ingredients
         ClearAllOutsideFood();
 

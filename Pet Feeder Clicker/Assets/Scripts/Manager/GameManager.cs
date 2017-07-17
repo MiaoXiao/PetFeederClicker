@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -27,7 +28,8 @@ public class GameManager : Singleton<GameManager>
 
     public int totalCutsPerIngredient = 5;
 
-    [Space(10)]
+    public Text EndGameScreen;
+    public GameObject endGameObject;
 
     public ObjectPooler extraFoodPooler;
 
@@ -105,6 +107,8 @@ public class GameManager : Singleton<GameManager>
         print("end");
         IngredientSpawner.Instance.spawnerStart = false;
         timerStart = false;
+        EndGameScreen.text = "You got " + currentScore + " points.";
+        endGameObject.gameObject.SetActive(true);
     }
 
     /// <summary>
