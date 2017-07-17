@@ -30,6 +30,30 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         generatedEasy = numberOfInitialEasy;
     }
 
+    public void CheckValidRecipe(GameObject food_collection, bool pot)
+    {
+       //create list of ingredients
+        List<IngredientPrepration> ingredient_list = new List<IngredientPrepration>();
+        for (int i = 0; i < food_collection.transform.childCount; ++i)
+        {
+            ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().originalIngredient);
+            for (int j = 0; j < food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients.Count; ++j)
+            {
+                ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients[j]);
+            }
+        }
+
+        //Compare with current recipes
+        for(int i = 0; i < shownRecipe.allGrids.Count; ++i)
+        {
+            RecipeHandler recipe_handler = shownRecipe.allGrids[i].transform.GetChild(0).GetComponent<RecipeHandler>();
+            if (recipe_handler.recipeData.canUsePot == pot || recipe_handler.recipeData.canUsePan == !pot)
+            {
+
+            }
+        }
+    }
+
     public void RemoveRecipe(int slot)
     {
         if (generatedEasy == numberOfInitialEasy)
@@ -79,7 +103,7 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
             if (normalRecipes.Count == 0)
                 InitNormalRecipes();
         }
-        
+
 
     }
 
