@@ -70,10 +70,12 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
                         for (int k = 0; k < ingredient_list.Count && !correct_ingredient_found; ++k)
                         {
                             print("comparing " + recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name + " to " + ingredient_list[k].Ingredient.name);
+                            print(recipe_handler.recipeData.recipeList[j].mustBeChopped + "  vs " + ingredient_list[k].fullyCut);
                             //Try to find ingredient match from recipe to ingredeint list
                             if (recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name == ingredient_list[k].Ingredient.name &&
                                 recipe_handler.recipeData.recipeList[j].mustBeChopped == ingredient_list[k].fullyCut)
                             {
+                                print("found correct " + recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name);
                                 correct_ingredient_found = true;
                                 ingredient_list[k].hasBeenChecked = true;
                                 break;
@@ -127,16 +129,19 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         }
 
         //Discard contents
-        for (int i = 0; i < food_collection.transform.childCount; ++i)
-        {
-            print("trashing " + food_collection.transform.GetChild(i).gameObject.name);
-            food_collection.transform.GetChild(i).gameObject.SetActive(false);
-        }
-        food_collection.transform.DetachChildren();
 
         if (special)
         {
-            food_collection.SetActive(false);
+            food_collection.GetComponent<Food>().TerminateObject();
+        }
+        else
+        {
+            print(food_collection.name);
+            for (int i = food_collection.transform.childCount - 1; i >= 0; --i)
+            {
+                print("trashing " + food_collection.transform.GetChild(i).gameObject.name);
+                food_collection.transform.GetChild(i).gameObject.GetComponent<Food>().TerminateObject();
+            }
         }
     }
 

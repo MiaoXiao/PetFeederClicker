@@ -14,7 +14,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
     {
         for (int i = 0; i < other.Count; ++i)
         {
-            allIngredients.Add(other[i]);
+            allIngredients.Add(other[i].Clone());
             GameObject ingredient = GameManager.Instance.extraFoodPooler.GetObject();
             ingredient.transform.SetParent(transform, true);
             ingredient.transform.position = transform.position;
@@ -110,16 +110,20 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 
         if (terminate_obj)
         {
-            for (int i = transform.childCount - 1; i >= 0; --i)
-            {
-                transform.GetChild(i).gameObject.SetActive(false);
-                transform.GetChild(i).transform.SetParent(UIManager.Instance.foodTransform, false);
-            }
-            gameObject.SetActive(false);
-            transform.SetParent(UIManager.Instance.foodTransform, true);
-
+            TerminateObject();
         }
 
+    }
+
+    public void TerminateObject()
+    {
+        for (int i = transform.childCount - 1; i >= 0; --i)
+        {
+            transform.GetChild(i).gameObject.SetActive(false);
+            transform.GetChild(i).transform.SetParent(UIManager.Instance.foodTransform, false);
+        }
+        gameObject.SetActive(false);
+        transform.SetParent(UIManager.Instance.foodTransform, true);
     }
 
     public string GetTypeName()
@@ -178,7 +182,9 @@ public class IngredientPrepration
 {
     public IngredientData Ingredient;
 
-    public bool fullyCut { get { return _numberOfCuts == GameManager.Instance.totalCutsPerIngredient; } }
+    public bool fullyCut { get {
+            Debug.Log(_numberOfCuts);
+            return _numberOfCuts >= GameManager.Instance.totalCutsPerIngredient; } }
 
     private int _numberOfCuts = 0;
     public int numberOfCuts
@@ -186,11 +192,9 @@ public class IngredientPrepration
         get { return _numberOfCuts; }
         set
         {
-            if (value > GameManager.Instance.totalCutsPerIngredient)
-                return;
-
-            if (value == GameManager.Instance.totalCutsPerIngredient)
+            if (value >= GameManager.Instance.totalCutsPerIngredient)
             {
+                Debug.Log("finish cut");
                 _numberOfCuts = GameManager.Instance.totalCutsPerIngredient;
                 currentSprite = Ingredient.cutIngredientSprite;
             }
