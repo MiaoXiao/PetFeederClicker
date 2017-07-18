@@ -6,6 +6,9 @@ using UnityEngine;
 public class IngredientSpawner : Singleton<IngredientSpawner>
 {
     [SerializeField]
+    private AudioClip windAudio;
+
+    [SerializeField]
     private RectTransform spawningArea;
 
     [Space(10)]
@@ -63,7 +66,7 @@ public class IngredientSpawner : Singleton<IngredientSpawner>
 
     public void SpawnWave()
     {
-        AudioMana.Instance.PlayWind();
+        AudioMana.Instance.PlayAudio(windAudio);
         //Clear all outside ingredients
         ClearAllOutsideFood();
 

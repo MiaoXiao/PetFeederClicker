@@ -6,6 +6,12 @@ using UnityEngine.UI;
 public class DragManager : Singleton<DragManager>
 {
     [SerializeField]
+    private AudioClip pickUpAudio;
+
+    [SerializeField]
+    private AudioClip dropAudio;
+
+    [SerializeField]
     private float minLockOnDistance = 250f;
 
     [HideInInspector]
@@ -18,7 +24,7 @@ public class DragManager : Singleton<DragManager>
 
     public void BeginDrag(IIsStorable storable)
     {
-        AudioMana.Instance.PlayPickUp();
+        AudioMana.Instance.PlayAudio(pickUpAudio);
         //print("begin");
         //Save last known grid
         lastGrid = storable.GetCurrentStorage();
@@ -101,5 +107,7 @@ public class DragManager : Singleton<DragManager>
 
         //Turn on raycast
         storable.GetTransform().GetComponent<Image>().raycastTarget = true;
+
+        AudioMana.Instance.PlayAudio(dropAudio);
     }
 }

@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class DraggableCookingWare : MonoBehaviour
 {
+    [SerializeField]
+    private AudioClip pickUpAudio;
+
     private Vector3 lastPosition;
     private Transform lastParent;
 
@@ -19,7 +22,7 @@ public class DraggableCookingWare : MonoBehaviour
 
     public void BeginDrag()
     {
-        AudioMana.Instance.PlayPickUp();
+        AudioMana.Instance.PlayAudio(pickUpAudio);
 
         cookingWare.Paused = true;
         lastPosition = transform.position;

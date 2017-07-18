@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public class RecipeHandler : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    [SerializeField]
+    private AudioClip ripAudio;
+
     public RecipeData recipeData;
 
     public Sprite mouseOverImage;
@@ -106,7 +109,7 @@ public class RecipeHandler : MonoBehaviour, IPointerDownHandler, IPointerEnterHa
                 UIManager.Instance.SetScore(GameManager.Instance.currentScore);
             }
             RecipeRandomizer.Instance.GetNewRecipe(transform.parent.GetSiblingIndex());
-            AudioMana.Instance.PlayRip();
+            AudioMana.Instance.PlayAudio(ripAudio);
         }
     }
 

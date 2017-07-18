@@ -4,23 +4,24 @@ using UnityEngine;
 
 public class AudioMana : Singleton<AudioMana>
 {
-    public void PlayChoppoing()
+    [SerializeField]
+    private ObjectPooler audioSources;
+    
+    public void PlayAudio(AudioClip info)
     {
-        GetComponents<AudioSource>()[0].Play();
+        GameObject audio_obj = audioSources.GetObject();
+        audio_obj.GetComponent<AudioSource>().clip = info;
+        audio_obj.GetComponent<AudioSource>().Play();
+        StartCoroutine(StopWhenFinishedPlaying(audio_obj.GetComponent<AudioSource>()));
     }
 
-    public void PlayPickUp()
+    private IEnumerator StopWhenFinishedPlaying(AudioSource source)
     {
-        GetComponents<AudioSource>()[1].Play();
-    }
+        while(source.isPlaying)
+        {
+            yield return null;
+        }
 
-    public void PlayRip()
-    {
-        GetComponents<AudioSource>()[2].Play();
-    }
-
-    public void PlayWind()
-    {
-        GetComponents<AudioSource>()[3].Play();
+        source.gameObject.SetActive(false);
     }
 }

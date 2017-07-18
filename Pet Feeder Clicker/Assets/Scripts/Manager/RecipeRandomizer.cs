@@ -5,6 +5,9 @@ using UnityEngine;
 public class RecipeRandomizer : Singleton<RecipeRandomizer>
 {
     [SerializeField]
+    private AudioClip successAudio;
+
+    [SerializeField]
     private List<RecipeHandler> allRecipes = new List<RecipeHandler>();
 
     [SerializeField]
@@ -127,9 +130,12 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
             GameManager.Instance.currentScore += discard_bonus;
             UIManager.Instance.SetScore(GameManager.Instance.currentScore);
         }
+        else
+        {
+            AudioMana.Instance.PlayAudio(successAudio);
+        }
 
         //Discard contents
-
         if (special)
         {
             food_collection.GetComponent<Food>().TerminateObject();

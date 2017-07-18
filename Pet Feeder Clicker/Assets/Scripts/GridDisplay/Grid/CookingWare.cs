@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class CookingWare : Grid
 {
+
+    [SerializeField]
+    private AudioClip burnAudio;
+
     [SerializeField]
     private float cookingIntervalTime = 2f;
     [SerializeField]
@@ -47,6 +51,8 @@ public class CookingWare : Grid
                     blackenList[i].color = charredColor;
                 }
                 ClearAllSteam();
+
+                AudioMana.Instance.PlayAudio(burnAudio);
             }
             else
             {

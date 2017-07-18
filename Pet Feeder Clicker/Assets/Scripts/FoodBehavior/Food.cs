@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 {
+    [SerializeField]
+    private AudioClip choppingAudio;
+
     public IngredientPrepration firstIngredient { get { return allIngredients[0]; } }
     public List<IngredientPrepration> allIngredients = new List<IngredientPrepration>();
 
@@ -162,7 +165,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
             if (GetCurrentStorage().gridContainerParent is CuttingBoard && firstIngredient.Ingredient.canBeCut)
             {
                 if (firstIngredient.numberOfCuts < 5)
-                    AudioMana.Instance.PlayChoppoing();
+                    AudioMana.Instance.PlayAudio(choppingAudio);
 
                 firstIngredient.numberOfCuts++;
                 currentImage.sprite = firstIngredient.currentSprite;
