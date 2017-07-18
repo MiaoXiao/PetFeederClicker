@@ -5,29 +5,20 @@ using UnityEngine;
 public class RecipeRandomizer : Singleton<RecipeRandomizer>
 {
     [SerializeField]
-    private int numberOfInitialEasy = 4;
-    private int generatedEasy = 0;
-
-    [SerializeField]
     private List<RecipeHandler> allRecipes = new List<RecipeHandler>();
 
-    private List<RecipeHandler> easyRecipes = new List<RecipeHandler>();
-    private List<RecipeHandler> normalRecipes = new List<RecipeHandler>();
-
     [SerializeField]
-    private GridContainer shownRecipe;
+    private GridContainer recipeGridContainer;
+
+    private List<RecipeHandler> shownRecipes = new List<RecipeHandler>();
 
     public void StartGeneration()
     {
-        InitEasyRecipes();
-        InitNormalRecipes();
-
         //Generate 3
         for (int i = 0; i < 3; ++i)
         {
-            GetNewRecipe(i, true);
+            GetNewRecipe(i);
         }
-        generatedEasy = numberOfInitialEasy;
     }
 
     private List<IngredientPrepration> SetUpIngredientList(GameObject food_collection, bool special)
@@ -38,11 +29,9 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
             List<IngredientPrepration> ingredient_list = new List<IngredientPrepration>();
             for (int i = 0; i < food_collection.transform.childCount; ++i)
             {
-                ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().originalIngredient);
-                ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
-                for (int j = 0; j < food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients.Count; ++j)
+                for (int j = 0; j < food_collection.transform.GetChild(i).GetComponent<Food>().allIngredients.Count; ++j)
                 {
-                    ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().otherIngredients[j]);
+                    ingredient_list.Add(food_collection.transform.GetChild(i).GetComponent<Food>().allIngredients[j]);
                     ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
                 }
             }
@@ -53,11 +42,9 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
             List<IngredientPrepration> ingredient_list = new List<IngredientPrepration>();
             for (int i = 0; i < food_collection.transform.childCount; ++i)
             {
-                ingredient_list.Add(food_collection.GetComponent<Food>().originalIngredient);
-                ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
-                for (int j = 0; j < food_collection.GetComponent<Food>().otherIngredients.Count; ++j)
+                for (int j = 0; j < food_collection.GetComponent<Food>().allIngredients.Count; ++j)
                 {
-                    ingredient_list.Add(food_collection.GetComponent<Food>().otherIngredients[j]);
+                    ingredient_list.Add(food_collection.GetComponent<Food>().allIngredients[j]);
                     ingredient_list[ingredient_list.Count - 1].hasBeenChecked = false;
                 }
             }
@@ -70,11 +57,11 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         bool recipe_found = false;
         if (!is_burned)
         {
-            for (int i = 0; i < shownRecipe.allGrids.Count && !recipe_found; ++i)
+            for (int i = 0; i < recipeGridContainer.allGrids.Count && !recipe_found; ++i)
             {
                 List<IngredientPrepration> ingredient_list = SetUpIngredientList(food_collection, special);
                 bool recipe_check_failed = false;
-                RecipeHandler recipe_handler = shownRecipe.allGrids[i].transform.GetChild(0).GetComponent<RecipeHandler>();
+                RecipeHandler recipe_handler = recipeGridContainer.allGrids[i].transform.GetChild(0).GetComponent<RecipeHandler>();
                 if ((recipe_handler.recipeData.canUsePot == pot || recipe_handler.recipeData.canUsePan == !pot) && !recipe_handler.Completed)
                 {
                     for (int j = 0; j < recipe_handler.recipeData.recipeList.Count && !recipe_check_failed; ++j)
@@ -153,95 +140,34 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         }
     }
 
-    public void RemoveRecipe(int slot)
-    {
-        if (generatedEasy == numberOfInitialEasy)
-            GetNewRecipe(slot, false);
-        else
-        {
-            GetNewRecipe(slot, true);
-            generatedEasy++;
-        }
-
-    }
-
-    private void GetNewRecipe(int slot, bool force_easy)
+    public void GetNewRecipe(int slot)
     {
         if (slot < 0 || slot >= 3)
             return;
 
-        //Detach recipe from slot
-        if (shownRecipe.allGrids[slot].transform.childCount != 0)
+        RecipeHandler add_back = null;
+        //Detach recipe from slot if neccesary
+        if (recipeGridContainer.allGrids[slot].transform.childCount != 0)
         {
-            shownRecipe.allGrids[slot].transform.GetChild(0).gameObject.SetActive(false);
-            shownRecipe.allGrids[slot].transform.DetachChildren();
+            add_back = recipeGridContainer.allGrids[slot].transform.GetChild(0).GetComponent<RecipeHandler>();
+            shownRecipes.Remove(add_back);
+            recipeGridContainer.allGrids[slot].transform.GetChild(0).gameObject.SetActive(false);
+            recipeGridContainer.allGrids[slot].transform.DetachChildren();
         }
 
-        int chooser = Random.Range(0, easyRecipes.Count + normalRecipes.Count + 1);
-        if (force_easy || chooser <= easyRecipes.Count)
+        int index = Random.Range(0, allRecipes.Count);
+        RecipeHandler recipe = allRecipes[index];
+
+        recipe.transform.SetParent(recipeGridContainer.allGrids[slot].transform, true);
+        recipe.transform.gameObject.SetActive(true);
+
+        shownRecipes.Add(recipe);
+        allRecipes.Remove(recipe);
+
+        if (add_back != null)
         {
-            RecipeHandler recipe;
-            bool finish = false;
-            do
-            {
-                //Make easy
-                int index = Random.Range(0, easyRecipes.Count);
-                print("easy index " + index);
-                recipe = easyRecipes[index];
-
-                if (recipe.transform.parent == null || recipe.transform.parent.name != "Recipe Grid")
-                    finish = true;
-            } while (!finish);
-
-
-            recipe.transform.SetParent(shownRecipe.allGrids[slot].transform, true);
-            recipe.transform.gameObject.SetActive(true);
-        }
-        else
-        {
-            RecipeHandler recipe;
-            bool finish = false;
-            do
-            {
-                //Make easy
-                int index = Random.Range(0, normalRecipes.Count);
-                print("normal index " + index);
-                recipe = normalRecipes[index];
-
-                if (recipe.transform.parent == null || recipe.transform.parent.name != "Recipe Grid")
-                    finish = true;
-            } while (!finish);
-
-            recipe.transform.SetParent(shownRecipe.allGrids[slot].transform, true);
-            recipe.transform.gameObject.SetActive(true);
+            allRecipes.Add(add_back);
         }
 
-
-    }
-
-    private void InitEasyRecipes()
-    {
-        easyRecipes.Clear();
-        for (int i = 0; i < allRecipes.Count; ++i)
-        {
-            if (allRecipes[i].recipeData.recipeType == RecipeType.Easy)
-            {
-                easyRecipes.Add(allRecipes[i]);
-            }
-
-        }
-    }
-
-    private void InitNormalRecipes()
-    {
-        normalRecipes.Clear();
-        for (int i = 0; i < allRecipes.Count; ++i)
-        {
-            if (allRecipes[i].recipeData.recipeType == RecipeType.Normal)
-            {
-                normalRecipes.Add(allRecipes[i]);
-            }
-
-        }
     }
 }

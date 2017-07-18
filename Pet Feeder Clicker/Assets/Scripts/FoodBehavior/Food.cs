@@ -7,26 +7,22 @@ using UnityEngine.UI;
 
 public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 {
-    public IngredientPrepration originalIngredient;
-
-    public List<IngredientPrepration> otherIngredients = new List<IngredientPrepration>();
+    public IngredientPrepration firstIngredient { get { return allIngredients[0]; } }
+    public List<IngredientPrepration> allIngredients = new List<IngredientPrepration>();
 
     public void AddFood(List<IngredientPrepration> other)
     {
-        print(other.Count);
         for (int i = 0; i < other.Count; ++i)
         {
-
-            otherIngredients.Add(other[i].Clone());
+            allIngredients.Add(other[i]);
             GameObject ingredient = GameManager.Instance.extraFoodPooler.GetObject();
-            ingredient.transform.SetParent(transform, true);;
+            ingredient.transform.SetParent(transform, true);
             ingredient.transform.position = transform.position;
-            ingredient.GetComponent<Image>().sprite = other[i].currentSprite;
+            ingredient.transform.localScale = transform.localScale;
+            ingredient.GetComponent<Image>().sprite = other[i].Ingredient.cutIngredientSprite;
         }
     }
 
-
-    
     private Image currentImage;
 
     /// <summary>
@@ -34,13 +30,13 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
     /// </summary>
     public int GetNumberOfExtraIngredients
     {
-        get { return otherIngredients.Count; }
+        get { return allIngredients.Count; }
     }
 
     private void Awake()
     {
         currentImage = GetComponent<Image>();
-        currentImage.sprite = originalIngredient.Ingredient.ingredientSprite;
+        currentImage.sprite = firstIngredient.Ingredient.ingredientSprite;
     }
 
     private void OnDisable()
@@ -48,15 +44,13 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         if (GameManager.Instance == null)
             return;
         
-        for (int i = 0; i < transform.childCount; ++i)
+        if (allIngredients.Count > 1)
         {
-            transform.GetChild(i).gameObject.SetActive(false);
+            allIngredients.RemoveRange(1, allIngredients.Count - 1);
         }
 
-        transform.DetachChildren();
-
-        originalIngredient.numberOfCuts = 0;
-        currentImage.sprite = originalIngredient.Ingredient.ingredientSprite;
+        firstIngredient.numberOfCuts = 0;
+        currentImage.sprite = firstIngredient.Ingredient.ingredientSprite;
 
         GetComponent<Image>().raycastTarget = true;
     }
@@ -67,7 +61,7 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
 
     public bool CanAcceptFood()
     {
-        return originalIngredient.fullyCut;
+        return firstIngredient.fullyCut;
     }
 
     public Grid GetCurrentStorage()
@@ -85,46 +79,47 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         transform.position = pos;
     }
 
-    int x = 0;
     public void SetStorage(Grid new_grid)
     {
 
         //print("moving " + transform.name + " to " + new_grid.name);
         transform.SetParent(new_grid.transform, true);
 
-        if (new_grid.IsWindow() && originalIngredient.fullyCut)
+        if (new_grid.IsWindow() && firstIngredient.fullyCut)
         {
             //Check if scoring
             RecipeRandomizer.Instance.CheckValidRecipe(gameObject, false, true, false);
         }
 
-
+        bool terminate_obj = false;
         if (new_grid.transform.childCount >= 2 &&
             GetComponent<IIsStorable>().CanAcceptFood() &&
             !new_grid.isVacant &&
             new_grid.storedObject.CanAcceptFood())
         {
-            x++;
+            //Combine ingredients into one ingredient
+            new_grid.storedObject.GetTransform().GetComponent<Food>().AddFood(allIngredients);
 
             print("combine");
 
-
-            //Combine ingredients into one ingredient
-            otherIngredients.Add(originalIngredient.Clone());
-            new_grid.storedObject.GetTransform().GetComponent<Food>().AddFood(otherIngredients);
-
-
             //Remove this object
-            transform.SetParent(null, true);
+            terminate_obj = true;
+        }
+
+        new_grid.AddItem();
+
+        if (terminate_obj)
+        {
+            for (int i = transform.childCount - 1; i >= 0; --i)
+            {
+                transform.GetChild(i).gameObject.SetActive(false);
+                transform.GetChild(i).transform.SetParent(UIManager.Instance.foodTransform, false);
+            }
             gameObject.SetActive(false);
-            
+            transform.SetParent(UIManager.Instance.foodTransform, true);
 
         }
 
-
-
-        new_grid.AddItem();
-        
     }
 
     public string GetTypeName()
@@ -160,18 +155,20 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             //print("click");
-            if (GetCurrentStorage().gridContainerParent is CuttingBoard && originalIngredient.Ingredient.canBeCut)
+            if (GetCurrentStorage().gridContainerParent is CuttingBoard && firstIngredient.Ingredient.canBeCut)
             {
-                originalIngredient.numberOfCuts++;
-                currentImage.sprite = originalIngredient.currentSprite;
+                if (firstIngredient.numberOfCuts < 5)
+                    AudioMana.Instance.PlayChoppoing();
+
+                firstIngredient.numberOfCuts++;
+                currentImage.sprite = firstIngredient.currentSprite;
 
                 //Display particles
 
+
                 //TODO: show cutting particles
-                AudioMana.Instance.PlayChoppoing();
 
             }
-
         }
     }
 }

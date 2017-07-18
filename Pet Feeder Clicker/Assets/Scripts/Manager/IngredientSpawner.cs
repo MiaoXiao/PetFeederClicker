@@ -94,6 +94,7 @@ public class IngredientSpawner : Singleton<IngredientSpawner>
             float rand_x = UnityEngine.Random.Range(min_x, max_x);
             float rand_y = UnityEngine.Random.Range(min_y, max_y);
             food.transform.position = new Vector2(rand_x, rand_y);
+            food.transform.localScale = new Vector3(1, 1, 1);
             //print(rand_x);
             //print(rand_y);
 
@@ -102,11 +103,11 @@ public class IngredientSpawner : Singleton<IngredientSpawner>
 
     private void ClearAllOutsideFood()
     {
-        for (int i = 0; i < spawningArea.transform.childCount; ++i)
+        for (int i = spawningArea.transform.childCount - 1; i >= 0; --i)
         {
             spawningArea.transform.GetChild(i).gameObject.SetActive(false);
+            spawningArea.transform.GetChild(i).SetParent(UIManager.Instance.foodTransform, true);
         }
-        spawningArea.transform.DetachChildren();
     }
 }
 

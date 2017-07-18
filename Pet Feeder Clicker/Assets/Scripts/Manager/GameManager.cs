@@ -39,8 +39,6 @@ public class GameManager : Singleton<GameManager>
 
     private int currentMinutes;
     public int currentSeconds = 0;
-    private float secondCounter = 0f;
-
 
     //Game Start Up
     private void Awake()

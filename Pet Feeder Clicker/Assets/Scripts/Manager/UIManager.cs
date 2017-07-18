@@ -9,6 +9,8 @@ public class UIManager : Singleton<UIManager>
 
     public Transform viewableTransform;
 
+    public Transform foodTransform;
+
     [HideInInspector]
     public Canvas mainCanvas;
 
