@@ -116,8 +116,12 @@ public class RecipeHandler : MonoBehaviour, IPointerDownHandler, IPointerEnterHa
     private Sprite savedSprite = null;
     public void OnPointerEnter(PointerEventData eventData)
     {
-        savedSprite = transform.parent.GetComponent<Image>().sprite;
-        transform.parent.GetComponent<Image>().sprite = mouseOverImage;
+        if (transform.parent.GetComponent<Image>() != null)
+        {
+            savedSprite = transform.parent.GetComponent<Image>().sprite;
+            transform.parent.GetComponent<Image>().sprite = mouseOverImage;
+        }
+
     }
 
     public void OnPointerExit(PointerEventData eventData)
