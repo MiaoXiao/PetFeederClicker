@@ -122,6 +122,7 @@ public class RecipeHandler : MonoBehaviour, IPointerDownHandler, IPointerEnterHa
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        transform.parent.GetComponent<Image>().sprite = savedSprite;
+        if (transform.parent.GetComponent<Image>() != null)
+            transform.parent.GetComponent<Image>().sprite = savedSprite;
     }
 }
