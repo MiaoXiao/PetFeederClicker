@@ -5,9 +5,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class RecipeHandler : MonoBehaviour, IPointerDownHandler
+public class RecipeHandler : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public RecipeData recipeData;
+
+    public Sprite mouseOverImage;
 
     private bool _Completed = false;
     public bool Completed
@@ -93,6 +95,7 @@ public class RecipeHandler : MonoBehaviour, IPointerDownHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
+            transform.parent.GetComponent<Image>().sprite = savedSprite;
             if (Completed)
             {
                 Completed = false;
@@ -105,5 +108,17 @@ public class RecipeHandler : MonoBehaviour, IPointerDownHandler
             RecipeRandomizer.Instance.GetNewRecipe(transform.parent.GetSiblingIndex());
             AudioMana.Instance.PlayRip();
         }
+    }
+
+    private Sprite savedSprite = null;
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        savedSprite = transform.parent.GetComponent<Image>().sprite;
+        transform.parent.GetComponent<Image>().sprite = mouseOverImage;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        transform.parent.GetComponent<Image>().sprite = savedSprite;
     }
 }
