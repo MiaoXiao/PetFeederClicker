@@ -10,6 +10,10 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
     [SerializeField]
     private AudioClip choppingAudio;
 
+    [SerializeField]
+    private GameObject animationCut;
+
+
     public IngredientPrepration firstIngredient { get { return allIngredients[0]; } }
     public List<IngredientPrepration> allIngredients = new List<IngredientPrepration>();
 
@@ -165,15 +169,16 @@ public class Food : MonoBehaviour, IIsStorable, IPointerDownHandler
             if (GetCurrentStorage().gridContainerParent is CuttingBoard && firstIngredient.Ingredient.canBeCut)
             {
                 if (firstIngredient.numberOfCuts < 5)
+                {
                     AudioMana.Instance.PlayAudio(choppingAudio);
+                    animationCut.transform.position = Input.mousePosition;
+                    print("move");
+                    //animationCut.GetComponent<Animation>().Play();
+                }
+
 
                 firstIngredient.numberOfCuts++;
                 currentImage.sprite = firstIngredient.currentSprite;
-
-                //Display particles
-
-
-                //TODO: show cutting particles
 
             }
         }
@@ -186,7 +191,7 @@ public class IngredientPrepration
     public IngredientData Ingredient;
 
     public bool fullyCut { get {
-            Debug.Log(_numberOfCuts);
+            //Debug.Log(_numberOfCuts);
             return _numberOfCuts >= GameManager.Instance.totalCutsPerIngredient; } }
 
     private int _numberOfCuts = 0;
@@ -197,7 +202,7 @@ public class IngredientPrepration
         {
             if (value >= GameManager.Instance.totalCutsPerIngredient)
             {
-                Debug.Log("finish cut");
+                //Debug.Log("finish cut");
                 _numberOfCuts = GameManager.Instance.totalCutsPerIngredient;
                 currentSprite = Ingredient.cutIngredientSprite;
             }

@@ -72,13 +72,13 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
                         bool correct_ingredient_found = false;
                         for (int k = 0; k < ingredient_list.Count && !correct_ingredient_found; ++k)
                         {
-                            print("comparing " + recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name + " to " + ingredient_list[k].Ingredient.name);
-                            print(recipe_handler.recipeData.recipeList[j].mustBeChopped + "  vs " + ingredient_list[k].fullyCut);
+                            //print("comparing " + recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name + " to " + ingredient_list[k].Ingredient.name);
+                            //print(recipe_handler.recipeData.recipeList[j].mustBeChopped + "  vs " + ingredient_list[k].fullyCut);
                             //Try to find ingredient match from recipe to ingredeint list
                             if (recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name == ingredient_list[k].Ingredient.name &&
                                 recipe_handler.recipeData.recipeList[j].mustBeChopped == ingredient_list[k].fullyCut)
                             {
-                                print("found correct " + recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name);
+                                //print("found correct " + recipe_handler.recipeData.recipeList[j].ingredientToAddToRecipe.name);
                                 correct_ingredient_found = true;
                                 ingredient_list[k].hasBeenChecked = true;
                                 break;
@@ -88,15 +88,15 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
                         if (!correct_ingredient_found)
                         {
                             recipe_check_failed = true;
-                            print("incorrect match with recipe " + recipe_handler.name);
+                            //print("incorrect match with recipe " + recipe_handler.name);
                         }
 
                     }
 
-                    print(recipe_handler.totalIngredientsNeeded + " == " + ingredient_list.Count);
+                    //print(recipe_handler.totalIngredientsNeeded + " == " + ingredient_list.Count);
                     if (!recipe_check_failed && recipe_handler.totalIngredientsNeeded == ingredient_list.Count)
                     {
-                        print("Recipe Match found with " + recipe_handler.name);
+                        //print("Recipe Match found with " + recipe_handler.name);
                         GameManager.Instance.currentScore += recipe_handler.recipeData.Points;
                         UIManager.Instance.SetScore(GameManager.Instance.currentScore);
                         recipe_handler.Completed = true;
@@ -106,7 +106,7 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
                 }
                 else
                 {
-                    print("incorrect cooking ware with " + recipe_handler.name);
+                    //print("incorrect cooking ware with " + recipe_handler.name);
                 }
             }
         }
@@ -142,10 +142,10 @@ public class RecipeRandomizer : Singleton<RecipeRandomizer>
         }
         else
         {
-            print(food_collection.name);
+            //print(food_collection.name);
             for (int i = food_collection.transform.childCount - 1; i >= 0; --i)
             {
-                print("trashing " + food_collection.transform.GetChild(i).gameObject.name);
+                //print("trashing " + food_collection.transform.GetChild(i).gameObject.name);
                 food_collection.transform.GetChild(i).gameObject.GetComponent<Food>().TerminateObject();
             }
         }
